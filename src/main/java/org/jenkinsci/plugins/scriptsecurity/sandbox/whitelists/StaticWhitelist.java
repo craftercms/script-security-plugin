@@ -38,22 +38,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import static java.util.Arrays.asList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import javax.annotation.Nonnull;
 
 import edu.umd.cs.findbugs.annotations.CheckForNull;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import org.jenkinsci.plugins.scriptsecurity.sandbox.RejectedAccessException;
-import org.jenkinsci.plugins.scriptsecurity.scripts.ScriptApproval;
-import org.kohsuke.accmod.Restricted;
-import org.kohsuke.accmod.restrictions.NoExternalUse;
 
 /**
  * Whitelist based on a static file.
  */
-public final class StaticWhitelist extends EnumeratingWhitelist {
+public class StaticWhitelist extends EnumeratingWhitelist {
     private static final String[] PERMANENTLY_BLACKLISTED_METHODS = {
             "method java.lang.Runtime exit int",
             "method java.lang.Runtime halt int",
@@ -260,33 +253,42 @@ public final class StaticWhitelist extends EnumeratingWhitelist {
         return staticFieldSignatures;
     }
 
-    public static RejectedAccessException rejectMethod(@Nonnull Method m) {
+    public static UnsupportedOperationException rejectMethod(@Nonnull Method m) {
         assert (m.getModifiers() & Modifier.STATIC) == 0;
-        return blacklist(new RejectedAccessException("method", EnumeratingWhitelist.getName(m.getDeclaringClass()) + " " + m.getName() + printArgumentTypes(m.getParameterTypes())));
+        return reject("method " + EnumeratingWhitelist.getName(m.getDeclaringClass()) + " " + m.getName() +
+                printArgumentTypes(m.getParameterTypes()));
     }
 
-    public static RejectedAccessException rejectMethod(@Nonnull Method m, String info) {
+    public static UnsupportedOperationException rejectMethod(@Nonnull Method m, String info) {
         assert (m.getModifiers() & Modifier.STATIC) == 0;
-        return blacklist(new RejectedAccessException("method", EnumeratingWhitelist.getName(m.getDeclaringClass()) + " " + m.getName() + printArgumentTypes(m.getParameterTypes()), info));
+        return reject("method " + EnumeratingWhitelist.getName(m.getDeclaringClass()) + " " + m.getName() +
+                printArgumentTypes(m.getParameterTypes()) + " (" + info + ")");
     }
 
-    public static RejectedAccessException rejectNew(@Nonnull Constructor<?> c) {
-        return blacklist(new RejectedAccessException("new", EnumeratingWhitelist.getName(c.getDeclaringClass()) + printArgumentTypes(c.getParameterTypes())));
+    public static UnsupportedOperationException rejectNew(@Nonnull Constructor<?> c) {
+        return reject("new " + EnumeratingWhitelist.getName(c.getDeclaringClass()) +
+                printArgumentTypes(c.getParameterTypes()));
     }
 
-    public static RejectedAccessException rejectStaticMethod(@Nonnull Method m) {
+    public static UnsupportedOperationException rejectStaticMethod(@Nonnull Method m) {
         assert (m.getModifiers() & Modifier.STATIC) != 0;
-        return blacklist(new RejectedAccessException("staticMethod", EnumeratingWhitelist.getName(m.getDeclaringClass()) + " " + m.getName() + printArgumentTypes(m.getParameterTypes())));
+        return reject("staticMethod " + EnumeratingWhitelist.getName(m.getDeclaringClass()) + " " + m.getName() +
+                printArgumentTypes(m.getParameterTypes()));
     }
 
-    public static RejectedAccessException rejectField(@Nonnull Field f) {
+    public static UnsupportedOperationException rejectField(@Nonnull Field f) {
         assert (f.getModifiers() & Modifier.STATIC) == 0;
-        return blacklist(new RejectedAccessException("field", EnumeratingWhitelist.getName(f.getDeclaringClass()) + " " + f.getName()));
+        return reject("field " + EnumeratingWhitelist.getName(f.getDeclaringClass()) + " " + f.getName());
     }
 
-    public static RejectedAccessException rejectStaticField(@Nonnull Field f) {
+    public static UnsupportedOperationException rejectStaticField(@Nonnull Field f) {
         assert (f.getModifiers() & Modifier.STATIC) != 0;
-        return blacklist(new RejectedAccessException("staticField", EnumeratingWhitelist.getName(f.getDeclaringClass()) + " " + f.getName()));
+        return reject("staticField " + EnumeratingWhitelist.getName(f.getDeclaringClass()) + " " + f.getName());
+    }
+
+    private static UnsupportedOperationException reject(String detail) {
+        return new UnsupportedOperationException("Insecure call to '" + detail + "' you can tweak the security " +
+                "sandbox to allow it. Read more about this in the documentation.");
     }
 
     private static String printArgumentTypes(Class<?>[] parameterTypes) {
@@ -296,50 +298,6 @@ public final class StaticWhitelist extends EnumeratingWhitelist {
             b.append(EnumeratingWhitelist.getName(c));
         }
         return b.toString();
-    }
-
-    private static final Set<String> BLACKLIST;
-
-    @SuppressFBWarnings(value = "OS_OPEN_STREAM", justification = "https://sourceforge.net/p/findbugs/bugs/786/")
-    private static Set<String> loadBlacklist() throws IOException {
-        InputStream is = StaticWhitelist.class.getResourceAsStream("blacklist");
-        try {
-            BufferedReader br = new BufferedReader(new InputStreamReader(is, "US-ASCII"));
-            Set<String> blacklist = new HashSet<String>();
-            String line;
-            while ((line = br.readLine()) != null) {
-                line = line.trim();
-                if (line.isEmpty() || line.startsWith("#")) {
-                    continue;
-                }
-                // TODO could consider trying to load the AccessibleObject, assuming the defining Class is accessible, as a defense against typos
-                blacklist.add(line);
-            }
-            return blacklist;
-        } finally {
-            is.close();
-        }
-    }
-
-    static {
-        try {
-            BLACKLIST = loadBlacklist();
-        } catch (IOException x) {
-            throw new ExceptionInInitializerError(x);
-        }
-    }
-
-    private static RejectedAccessException blacklist(RejectedAccessException x) {
-        if (BLACKLIST.contains(x.getSignature())) {
-            x.setDangerous(true);
-        }
-        ScriptApproval.maybeRegister(x);
-        return x;
-    }
-
-    @Restricted(NoExternalUse.class) // ScriptApproval
-    public static boolean isBlacklisted(String signature) {
-        return BLACKLIST.contains(signature);
     }
 
 }
