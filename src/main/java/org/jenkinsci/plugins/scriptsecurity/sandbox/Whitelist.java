@@ -24,34 +24,22 @@
 
 package org.jenkinsci.plugins.scriptsecurity.sandbox;
 
-import hudson.Extension;
-import hudson.ExtensionList;
-import hudson.ExtensionPoint;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.Map;
-import java.util.WeakHashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
-import jenkins.model.Jenkins;
-import org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.GroovySandbox;
-import org.jenkinsci.plugins.scriptsecurity.sandbox.whitelists.ProxyWhitelist;
 
 /**
  * Determines which methods and similar members which scripts may call.
  */
-public abstract class Whitelist implements ExtensionPoint {
-
-    private static final Logger LOGGER = Logger.getLogger(Whitelist.class.getName());
+public abstract class Whitelist {
 
     /**
      * Checks whether a given virtual method may be invoked.
      * <p>Note that {@code method} should not be implementing or overriding a method in a supertype;
      * in such a case the caller must pass that supertype method instead.
-     * In other words, call site selection is the responsibility of the caller (such as {@link GroovySandbox}), not the whitelist.
+     * In other words, call site selection is the responsibility of the caller (such as {@code GroovySandbox}), not the whitelist.
      * @param method a method defined in the JVM
      * @param receiver {@code this}, the receiver of the method call
      * @param args zero or more arguments
@@ -70,31 +58,5 @@ public abstract class Whitelist implements ExtensionPoint {
     public abstract boolean permitsStaticFieldGet(@Nonnull Field field);
 
     public abstract boolean permitsStaticFieldSet(@Nonnull Field field, @CheckForNull Object value);
-
-    /**
-     * Checks for all whitelists registered as {@link Extension}s and aggregates them.
-     * @return an aggregated default list
-     */
-    public static synchronized @Nonnull Whitelist all() {
-        Jenkins j = Jenkins.getInstanceOrNull();
-        if (j == null) {
-            LOGGER.log(Level.WARNING, "No Jenkins.instance", new Throwable("here"));
-            return new ProxyWhitelist();
-        }
-        Whitelist all = allByJenkins.get(j);
-        if (all == null) {
-            ExtensionList<Whitelist> allWhitelists = j.getExtensionList(Whitelist.class);
-            if (allWhitelists.isEmpty()) {
-                LOGGER.log(Level.WARNING, "No Whitelist instances registered", new Throwable("here"));
-                return new ProxyWhitelist();
-            } else {
-                LOGGER.fine(() -> "Loading whitelists: " + allWhitelists);
-            }
-            all = new ProxyWhitelist(allWhitelists);
-            allByJenkins.put(j, all);
-        }
-        return all;
-    }
-    private static final Map<Jenkins,Whitelist> allByJenkins = new WeakHashMap<Jenkins,Whitelist>();
 
 }

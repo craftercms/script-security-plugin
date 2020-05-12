@@ -32,7 +32,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.commons.lang.ClassUtils;
+import org.apache.commons.lang3.ClassUtils;
 import org.jenkinsci.plugins.scriptsecurity.sandbox.Whitelist;
 
 import javax.annotation.CheckForNull;
@@ -86,7 +86,7 @@ public abstract class EnumeratingWhitelist extends Whitelist {
         this.permittedCache = new ConcurrentHashMap<String, Boolean>();
     }
 
-    @Override public final boolean permitsMethod(Method method, Object receiver, Object[] args) {
+    @Override public boolean permitsMethod(Method method, Object receiver, Object[] args) {
         String key = canonicalMethodSig(method);
         Boolean b = permittedCache.get(key);
         if (b != null) {
@@ -104,7 +104,7 @@ public abstract class EnumeratingWhitelist extends Whitelist {
         return output;
     }
 
-    @Override public final boolean permitsConstructor(Constructor<?> constructor, Object[] args) {
+    @Override public boolean permitsConstructor(Constructor<?> constructor, Object[] args) {
         String key = canonicalConstructorSig(constructor);
         Boolean b = permittedCache.get(key);
         if (b != null) {
@@ -122,7 +122,7 @@ public abstract class EnumeratingWhitelist extends Whitelist {
         return output;
     }
 
-    @Override public final boolean permitsStaticMethod(Method method, Object[] args) {
+    @Override public boolean permitsStaticMethod(Method method, Object[] args) {
         String key = canonicalStaticMethodSig(method);
         Boolean b = permittedCache.get(key);
         if (b != null) {
@@ -140,7 +140,7 @@ public abstract class EnumeratingWhitelist extends Whitelist {
         return output;
     }
 
-    @Override public final boolean permitsFieldGet(Field field, Object receiver) {
+    @Override public boolean permitsFieldGet(Field field, Object receiver) {
         String key = canonicalFieldSig(field);
         Boolean b = permittedCache.get(key);
         if (b != null) {
@@ -158,11 +158,11 @@ public abstract class EnumeratingWhitelist extends Whitelist {
         return output;
     }
 
-    @Override public final boolean permitsFieldSet(Field field, Object receiver, Object value) {
+    @Override public boolean permitsFieldSet(Field field, Object receiver, Object value) {
         return permitsFieldGet(field, receiver);
     }
 
-    @Override public final boolean permitsStaticFieldGet(Field field) {
+    @Override public boolean permitsStaticFieldGet(Field field) {
         String key = canonicalStaticFieldSig(field);
         Boolean b = permittedCache.get(key);
         if (b != null) {
@@ -180,7 +180,7 @@ public abstract class EnumeratingWhitelist extends Whitelist {
         return output;
     }
 
-    @Override public final boolean permitsStaticFieldSet(Field field, Object value) {
+    @Override public boolean permitsStaticFieldSet(Field field, Object value) {
         return permitsStaticFieldGet(field);
     }
 

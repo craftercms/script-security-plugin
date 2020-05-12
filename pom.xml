@@ -1,24 +1,19 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>org.jenkins-ci.plugins</groupId>
-    <artifactId>plugin</artifactId>
-    <version>4.1</version>
-    <relativePath />
-  </parent>
-
+  <groupId>org.craftercms</groupId>
   <artifactId>script-security</artifactId>
   <version>${revision}${changelist}</version>
-  <packaging>hpi</packaging>
+  <packaging>jar</packaging> <!-- Update packaging to use as a dependency instead of a plugin -->
   <name>Script Security Plugin</name>
   <description>Allows Jenkins administrators to control what in-process scripts can be run by less-privileged users.</description>
   <url>https://github.com/jenkinsci/script-security-plugin</url>
   <properties>
-    <revision>1.72</revision>
-    <changelist>-SNAPSHOT</changelist>
-    <jenkins.version>2.176.4</jenkins.version>
+    <revision>1.72.1</revision>
+    <changelist></changelist>
     <java.level>8</java.level>
     <configuration-as-code.version>1.35</configuration-as-code.version>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
   </properties>
   <licenses>
     <license>
@@ -60,33 +55,49 @@
   </build>
 
   <dependencies>
-    <dependency>
-      <groupId>org.kohsuke</groupId>
-      <artifactId>groovy-sandbox</artifactId>
-      <version>1.26</version>
-      <exclusions>
-        <exclusion>
+      <dependency>
+          <groupId>org.apache.commons</groupId>
+          <artifactId>commons-lang3</artifactId>
+          <version>3.8.1</version>
+          <scope>provided</scope>
+      </dependency>
+
+      <dependency>
+          <groupId>org.apache.commons</groupId>
+          <artifactId>commons-collections4</artifactId>
+          <version>4.1</version>
+          <scope>provided</scope>
+      </dependency>
+
+      <dependency>
+          <groupId>com.google.guava</groupId>
+          <artifactId>guava-collections</artifactId>
+          <version>r03</version>
+      </dependency>
+
+      <dependency>
           <groupId>org.codehaus.groovy</groupId>
-          <artifactId>groovy</artifactId>
-        </exclusion>
-      </exclusions>
+          <artifactId>groovy-all</artifactId>
+          <version>2.4.15</version>
+          <scope>provided</scope>
+      </dependency>
+
+      <dependency>
+          <groupId>com.google.code.findbugs</groupId>
+          <artifactId>findbugs</artifactId>
+          <version>3.0.1</version>
+      </dependency>
+
+    <dependency>
+      <groupId>org.craftercms</groupId>
+      <artifactId>groovy-sandbox</artifactId>
+      <version>1.27.1</version>
     </dependency>
+
     <dependency>
       <groupId>com.github.ben-manes.caffeine</groupId>
       <artifactId>caffeine</artifactId>
       <version>2.7.0</version>
-    </dependency>
-    <dependency>
-      <groupId>io.jenkins</groupId>
-      <artifactId>configuration-as-code</artifactId>
-      <version>${configuration-as-code.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>io.jenkins.configuration-as-code</groupId>
-      <artifactId>test-harness</artifactId>
-      <version>${configuration-as-code.version}</version>
-      <scope>test</scope>
     </dependency>
   </dependencies>
 </project>
