@@ -411,37 +411,6 @@ public final class SandboxInterceptor extends GroovyInterceptor {
                 }
             }
         }
-
-        // Support for GPath access
-        Object[] gpathArg = new Object[] { property };
-        Method gpathMethod = GroovyCallSiteSelector.method(receiver, "get", gpathArg);
-        if (gpathMethod != null) {
-            if (whitelist.permitsMethod(gpathMethod, receiver, gpathArg)) {
-                return super.onGetProperty(invoker, receiver, property);
-            } else if (rejector == null) {
-                rejector = new Rejector() {
-                    @Override public UnsupportedOperationException reject() {
-                        return StaticWhitelist.rejectMethod(gpathMethod);
-                    }
-                };
-            }
-        }
-
-        // Support for DSL style no args methods
-        // Support for GPath access
-        Method dslMethod = GroovyCallSiteSelector.method(receiver, property, noArgs);
-        if (dslMethod != null) {
-            if (whitelist.permitsMethod(dslMethod, receiver, noArgs)) {
-                return super.onMethodCall(invoker, receiver, property, noArgs);
-            } else if (rejector == null) {
-                rejector = new Rejector() {
-                    @Override public UnsupportedOperationException reject() {
-                        return StaticWhitelist.rejectMethod(dslMethod);
-                    }
-                };
-            }
-        }
-
         if (mpe != null) {
             throw mpe;
         }
