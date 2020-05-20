@@ -25,6 +25,7 @@
 package org.jenkinsci.plugins.scriptsecurity.sandbox.groovy;
 
 import com.google.common.primitives.Primitives;
+import groovy.lang.Closure;
 import groovy.lang.GString;
 import groovy.lang.GroovyInterceptable;
 import java.lang.reflect.AccessibleObject;
@@ -66,6 +67,14 @@ class GroovyCallSiteSelector {
             if (parameterTypes[i].isInstance(parameters[i])) {
                 // OK, this parameter matches.
                 continue;
+            }
+            // Add support for closures as lambdas
+            if (parameters[i] instanceof Closure<?>) {
+                Class<?> type = parameterTypes[i];
+                if (type.isInterface() && type.getAnnotation(FunctionalInterface.class) != null
+                        || type.getDeclaredMethods().length == 1) {
+                    continue;
+                }
             }
             if (
                     parameterTypes[i].isPrimitive()
