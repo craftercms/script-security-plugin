@@ -217,19 +217,20 @@ public final class SandboxInterceptor extends GroovyInterceptor {
                 };
             }
         }
-        Object[] propertyValueArgs = new Object[] {property, value};
-        final Method setPropertyMethod = GroovyCallSiteSelector.method(receiver, "setProperty", propertyValueArgs);
-        if (setPropertyMethod != null) {
-            if (whitelist.permitsMethod(setPropertyMethod, receiver, propertyValueArgs)) {
-                return super.onSetProperty(invoker, receiver, property, value);
-            } else if (rejector == null) {
-                rejector = new Rejector() {
-                    @Override public UnsupportedOperationException reject() {
-                        return StaticWhitelist.rejectMethod(setPropertyMethod, receiver.getClass().getName() + "." + property);
-                    }
-                };
-            }
-        }
+        // Disabled, we have this method in the blacklist so there is no point in supporting it
+//        Object[] propertyValueArgs = new Object[] {property, value};
+//        final Method setPropertyMethod = GroovyCallSiteSelector.method(receiver, "setProperty", propertyValueArgs);
+//        if (setPropertyMethod != null) {
+//            if (whitelist.permitsMethod(setPropertyMethod, receiver, propertyValueArgs)) {
+//                return super.onSetProperty(invoker, receiver, property, value);
+//            } else if (rejector == null) {
+//                rejector = new Rejector() {
+//                    @Override public RejectedAccessException reject() {
+//                        return StaticWhitelist.rejectMethod(setPropertyMethod, receiver.getClass().getName() + "." + property);
+//                    }
+//                };
+//            }
+//        }
         final Field instanceField = GroovyCallSiteSelector.field(receiver, property);
         if (instanceField != null) {
             if (whitelist.permitsFieldSet(instanceField, receiver, value)) {
@@ -268,7 +269,13 @@ public final class SandboxInterceptor extends GroovyInterceptor {
                 }
             }
         }
-        throw rejector != null ? rejector.reject() : unclassifiedField(receiver, property);
+
+        // If the propery was not found use the regular Groovy exception instead the one from sandbox
+        if (rejector != null) {
+            throw rejector.reject();
+        } else {
+            throw new MissingPropertyException(property, receiver.getClass());
+        }
     }
 
     @Override public Object onGetProperty(GroovyInterceptor.Invoker invoker, final Object receiver, final String property) throws Throwable {
@@ -354,20 +361,21 @@ public final class SandboxInterceptor extends GroovyInterceptor {
                 };
             }
         }
+        // Disabled, we have this method in the blacklist so there is no point in supporting it
         // GroovyObject property access
-        Object[] propertyArg = new Object[] {property};
-        final Method getPropertyMethod = GroovyCallSiteSelector.method(receiver, "getProperty", propertyArg);
-        if (getPropertyMethod != null) {
-            if (whitelist.permitsMethod(getPropertyMethod, receiver, propertyArg)) {
-                return super.onGetProperty(invoker, receiver, property);
-            } else if (rejector == null) {
-                rejector = new Rejector() {
-                    @Override public UnsupportedOperationException reject() {
-                        return StaticWhitelist.rejectMethod(getPropertyMethod, receiver.getClass().getName() + "." + property);
-                    }
-                };
-            }
-        }
+//        Object[] propertyArg = new Object[] {property};
+//        final Method getPropertyMethod = GroovyCallSiteSelector.method(receiver, "getProperty", propertyArg);
+//        if (getPropertyMethod != null) {
+//            if (whitelist.permitsMethod(getPropertyMethod, receiver, propertyArg)) {
+//                return super.onGetProperty(invoker, receiver, property);
+//            } else if (rejector == null) {
+//                rejector = new Rejector() {
+//                    @Override public RejectedAccessException reject() {
+//                        return StaticWhitelist.rejectMethod(getPropertyMethod, receiver.getClass().getName() + "." + property);
+//                    }
+//                };
+//            }
+//        }
         MetaMethod metaMethod = findMetaMethod(receiver, getter, noArgs);
         if (metaMethod instanceof ClosureMetaMethod) {
             return super.onGetProperty(invoker, receiver, property);
@@ -411,10 +419,16 @@ public final class SandboxInterceptor extends GroovyInterceptor {
                 }
             }
         }
+
+        // If the propery was not found use the regular Groovy exception instead the one from sandboxtodo bie
+        if (rejector != null) {
+            throw rejector.reject();
+        }
         if (mpe != null) {
             throw mpe;
+        } else {
+            throw new MissingPropertyException(property, receiver.getClass());
         }
-        throw rejector != null ? rejector.reject() : unclassifiedField(receiver, property);
     }
 
     @Override
