@@ -42,15 +42,7 @@ import javax.annotation.Nonnull;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.codehaus.groovy.runtime.DateGroovyMethods;
-import org.codehaus.groovy.runtime.DefaultGroovyMethods;
-import org.codehaus.groovy.runtime.EncodingGroovyMethods;
-import org.codehaus.groovy.runtime.InvokerHelper;
-import org.codehaus.groovy.runtime.ProcessGroovyMethods;
-import org.codehaus.groovy.runtime.SqlGroovyMethods;
-import org.codehaus.groovy.runtime.StringGroovyMethods;
-import org.codehaus.groovy.runtime.SwingGroovyMethods;
-import org.codehaus.groovy.runtime.XmlGroovyMethods;
+import org.codehaus.groovy.runtime.*;
 import org.codehaus.groovy.runtime.metaclass.ClosureMetaMethod;
 import org.codehaus.groovy.runtime.typehandling.NumberMathModificationInfo;
 import org.codehaus.groovy.tools.DgmConverter;
@@ -81,6 +73,7 @@ public final class SandboxInterceptor extends GroovyInterceptor {
 
     /** should be synchronized with {@link DgmConverter} */
     private static final Class<?>[] DGM_CLASSES = {
+        DefaultGroovyStaticMethods.class,
         DefaultGroovyMethods.class,
         StringGroovyMethods.class,
         SwingGroovyMethods.class,
@@ -89,6 +82,10 @@ public final class SandboxInterceptor extends GroovyInterceptor {
         EncodingGroovyMethods.class,
         DateGroovyMethods.class,
         ProcessGroovyMethods.class,
+        IOGroovyMethods.class,
+        NioGroovyMethods.class,
+        ResourceGroovyMethods.class,
+        EncodingGroovyMethods.class
     };
 
     /** @see NumberMathModificationInfo */
