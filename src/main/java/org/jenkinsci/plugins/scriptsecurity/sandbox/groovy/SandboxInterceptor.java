@@ -50,6 +50,7 @@ import org.jenkinsci.plugins.scriptsecurity.sandbox.Whitelist;
 import org.jenkinsci.plugins.scriptsecurity.sandbox.whitelists.EnumeratingWhitelist;
 import org.jenkinsci.plugins.scriptsecurity.sandbox.whitelists.StaticWhitelist;
 import org.kohsuke.groovy.sandbox.GroovyInterceptor;
+import org.apache.groovy.sql.extensions.SqlExtensions;
 
 import static java.util.Arrays.asList;
 
@@ -84,7 +85,8 @@ public final class SandboxInterceptor extends GroovyInterceptor {
         IOGroovyMethods.class,
         NioGroovyMethods.class,
         ResourceGroovyMethods.class,
-        EncodingGroovyMethods.class
+        EncodingGroovyMethods.class,
+        SqlExtensions.class
     };
 
     /** @see NumberMathModificationInfo */

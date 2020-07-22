@@ -80,6 +80,11 @@
       </dependency>
 
       <dependency>
+        <groupId>org.codehaus.groovy</groupId>
+        <artifactId>groovy-sql</artifactId>
+      </dependency>
+
+      <dependency>
           <groupId>com.google.code.findbugs</groupId>
           <artifactId>findbugs</artifactId>
           <version>3.0.1</version>
