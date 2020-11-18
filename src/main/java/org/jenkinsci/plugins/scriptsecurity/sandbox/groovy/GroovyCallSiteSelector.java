@@ -133,17 +133,8 @@ class GroovyCallSiteSelector {
             return true;
         }
         // https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.1.2
-        if (instance instanceof Number) {
-            if (type == Long.class && instance instanceof Integer) {
-                return true; // widening
-            }
-            if (type == Integer.class && instance instanceof Long) {
-                Long n = (Long) instance;
-                if (n >= Integer.MIN_VALUE && n <= Integer.MAX_VALUE) {
-                    return true; // safe narrowing
-                }
-            }
-            // TODO etc. for other conversions if they ever come up
+        if (instance instanceof Number && Number.class.isAssignableFrom(type)) {
+            return true; // Let groovy handle the conversions
         }
         return false;
     }

@@ -109,7 +109,7 @@ public final class SandboxInterceptor extends GroovyInterceptor {
                 Method dgmMethod = GroovyCallSiteSelector.staticMethod(dgmClass, method, selfArgs);
                 if (dgmMethod != null) {
                     if (whitelist.permitsStaticMethod(dgmMethod, selfArgs)) {
-                        return onStaticCall(invoker, dgmClass, method, selfArgs);
+                        return super.onMethodCall(invoker, receiver, method, args);
                     } else if (foundDgmMethod == null) {
                         foundDgmMethod = dgmMethod;
                     }
@@ -417,7 +417,7 @@ public final class SandboxInterceptor extends GroovyInterceptor {
             }
         }
 
-        // If the propery was not found use the regular Groovy exception instead the one from sandboxtodo bie
+        // If the property was not found use the regular Groovy exception instead the one from sandbox
         if (rejector != null) {
             throw rejector.reject();
         }
