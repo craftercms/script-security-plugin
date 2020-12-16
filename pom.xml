@@ -8,7 +8,7 @@
   <description>Allows Jenkins administrators to control what in-process scripts can be run by less-privileged users.</description>
   <url>https://github.com/jenkinsci/script-security-plugin</url>
   <properties>
-    <revision>1.72.6</revision>
+    <revision>1.72.7</revision>
     <changelist></changelist>
     <java.level>8</java.level>
     <configuration-as-code.version>1.35</configuration-as-code.version>
@@ -89,7 +89,7 @@
       <dependency>
           <groupId>org.codehaus.groovy</groupId>
           <artifactId>groovy-all</artifactId>
-          <version>2.4.15</version>
+          <version>2.4.19</version>
           <scope>provided</scope>
       </dependency>
 
@@ -102,7 +102,7 @@
     <dependency>
       <groupId>org.craftercms</groupId>
       <artifactId>groovy-sandbox</artifactId>
-      <version>1.27.5</version>
+      <version>1.27.6</version>
     </dependency>
 
     <dependency>
