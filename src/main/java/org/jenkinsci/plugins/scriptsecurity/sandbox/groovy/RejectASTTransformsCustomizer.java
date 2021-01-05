@@ -49,9 +49,10 @@ import java.util.Arrays;
 import java.util.List;
 
 public class RejectASTTransformsCustomizer extends CompilationCustomizer {
-    private static final List<String> BLOCKED_TRANSFORMS = ImmutableList.of(ASTTest.class.getCanonicalName(), Grab.class.getCanonicalName(),
-            GrabConfig.class.getCanonicalName(), GrabExclude.class.getCanonicalName(), GrabResolver.class.getCanonicalName(),
-            Grapes.class.getCanonicalName(), AnnotationCollector.class.getCanonicalName());
+
+    // For Crafter we will still allow Grapes
+    private static final List<String> BLOCKED_TRANSFORMS = ImmutableList.of(ASTTest.class.getCanonicalName(),
+            AnnotationCollector.class.getCanonicalName());
 
     public RejectASTTransformsCustomizer() {
         super(CompilePhase.CONVERSION);
@@ -93,7 +94,9 @@ public class RejectASTTransformsCustomizer extends CompilationCustomizer {
             if (node != null && node.getType() != null) {
                 for (String blockedAnnotation : getBlockedTransforms()) {
                     if (blockedAnnotation.equals(node.getType().getName()) || blockedAnnotation.endsWith("." + node.getType().getName())) {
-                        throw new SecurityException("Annotation " + node.getType().getName() + " cannot be used in the sandbox.");
+                        throw new UnsupportedOperationException("Insecure annotation '" + node.getType().getName() +
+                                "' you can tweak the security sandbox to allow it. Read more about this in the " +
+                                "documentation.");
                     }
                 }
             }
@@ -109,7 +112,9 @@ public class RejectASTTransformsCustomizer extends CompilationCustomizer {
             for (AnnotationNode an : node.getAnnotations()) {
                 for (String blockedAnnotation : getBlockedTransforms()) {
                     if (blockedAnnotation.equals(an.getClassNode().getName()) || blockedAnnotation.endsWith("." + an.getClassNode().getName())) {
-                        throw new SecurityException("Annotation " + an.getClassNode().getName() + " cannot be used in the sandbox.");
+                        throw new UnsupportedOperationException("Insecure annotation '" + an.getClassNode().getName() +
+                                "' you can tweak the security sandbox to allow it. Read more about this in the " +
+                                "documentation.");
                     }
                 }
             }
