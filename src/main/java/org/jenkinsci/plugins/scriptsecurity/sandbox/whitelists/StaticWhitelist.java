@@ -54,6 +54,11 @@ public class StaticWhitelist extends EnumeratingWhitelist {
 
     private static final String[] PERMANENTLY_BLACKLISTED_STATIC_METHODS = {
             "staticMethod java.lang.System exit int",
+            "staticMethod java.lang.System getProperties",
+            "staticMethod java.lang.System getProperty java.lang.String",
+            "staticMethod java.lang.System getProperty java.lang.String java.lang.String",
+            "staticMethod java.lang.System getenv",
+            "staticMethod java.lang.System getenv java.lang.String"
     };
 
     private static final String[] PERMANENTLY_BLACKLISTED_CONSTRUCTORS = {
