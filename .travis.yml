@@ -1,4 +1,4 @@
-version: ~> 1.0
+version: "~> 1.0"
 git:
   depth: 1
   quiet: true
@@ -12,7 +12,7 @@ branches:
   - master
 cache:
   directories:
-    - $HOME/.m2
+  - "$HOME/.m2"
 notifications:
   irc:
     channels:
@@ -23,9 +23,9 @@ notifications:
 script:
 - if [[ "$TRAVIS_PULL_REQUEST" == "false" ]]; then bash -c  "mvn -DskipTests deploy
   --settings .travis-settings.xml";  fi
-- if [[ "$TRAVIS_PULL_REQUEST" != "false" ]]; then bash -c "mvn -DskipTests clean install"
-  ;fi
+- if [[ "$TRAVIS_PULL_REQUEST" != "false" ]]; then bash -c "mvn -DskipTests clean
+  install" ;fi
 env:
   global:
-  - secure: JZSgBJ1UXHinEPt7OVN+hgq0W1PjPCfPlD9PLAFhL4EhWZLydfa8i8IThZR/2zlZjJREH70amGaWjwkxA02GvJJMTHY5O2ptePzwcqHr0udADJERQSMaA68klWmM6lGuqE29jdZjLROqlFLpBoI54hcXj/LVR6E4FkAIK5mv2nxOThZkVz0CBkuOoL2bDC0IqHBCBieVK8ZNh0K4BZQFfGp5iCh+2Tbu7eIpJpWE7EzjjuC68KA26qP4x/BLbGnlqDnEjZSo4XbezDnl8G3L8e5KeCtoX8FQmMKcc97a0T0ga9ZTmBWo96egFjeCyIow9hnzGyKrfylzwiq0uiNoLgSwVTnNI8zwdHhEmhQ7l1IuwrBacHUUpDm4ZCFCbY6QZnYHFcC2YKqOMPsQ0J3EdEdrIczI0XFHlFl2I5I/JC3GcMUmbBmSm1QQOzb8PZvOdi5979H0GqygC9HVFcElZgD1qIDdocyKS3uKnNsTpUk045eNSwh1w4TCkN3wWsuDrN3Nyo+wyR0hei3SKlFQWn9nA3aoSSlaMk+FvDPa40aP2OCRamvUsfTlrpRbbg3Kgcex6sFdIEiEqljAdkv1KEFZwswpqQvWfdat2acFaEiCg1pFiOiZBKFV71DjqVbcyCkZaSvh4hYU6VktexX32KskQBHthCxbiY+2ztaMOnc=
-  - secure: blEyPOTj8iX1uuYxmgkRwzlK1959jG0PMF17AN7P4K934+Z+tH/L5kouuua4G3N+Hswj5k7L0CVhqSNeV75cIYGfedLSZmLsHn1SNJ8W5vTvDSBq4h2S6h9joxI6OF7fioKWJfsOpOEtJ1rSqjjOFIyR99KEabriWe7yr8+LNqG6QJ7/UkMytRoQGAMnhaOlCClQ2X/Ew1t7+bh7teDdYAbhF3g5XopOoys0N8OL3R93xFO5RxOEN2/voktICOG2wKTLbX3gMMEx6o9X9YVquOuJj2TDwqXZQNOKILcPTl+WhNlZP0MryW3ai15icROsPNeMQi8Nya9PdsAh+Fn6WdKugtOy1JfC5pI2FXPgBUwVneSM9Q97xpjNirlMAHYwTL5ykUaDJYDjGPpyZYMuJBzL8PZUIDvByrqQ9USFUzoOLksub/y9Emx3H0CweT8rf07hEVzQFUBCgdH8S0p1+nhRU7JEjpH4348LyYC3ueHJEQ5rOmYlPPnVhjT4Hni+P2xAc4AAAjLvGIUQGLwhgoq9Ggio8FgJ11fmzzUoJgcmQoRDBHxJEujITESa7h0YDgsPUAaKnusQky/LXrRJp+UQEFHOtoT7I0t+kFlNe/p1K5vePbUURZVE2lsQWHew1PXDTSWvRwuUykBsM/zUQrOnvGRML0k7hiJOb2qxczI=
+  - secure: eywE6qkzx50rCZ7O3NDfjkgvHMeEpznovB3juXW0hox+LWpKNDbpnlClsRvEMYGFQGdHE59zo4FtyrlzwK6HyMmkTu21e1hgKmDyyypOzFvp4tuDP5e6HsKupPAN3GF5VPB2s/dPJE4awwpx9Jwe6dxe2w7fnxC7HBurn9mb5WTk9pFJwMb8rfAGoZT/XOuzERI40eNMhFFPBt6zYLttClXjc0b1hNMfq44IycBOAqt9VushO8LZ2s1PChx8HNfJKjsCs8hwUlFQdLadmXUFIYdahghX2hsS5VC3e1MPKZwGPcGvWf5YKSct9vkr5BeaGIGIEey2IO4ey5sdN2BMKjdZJyh5vjIGMtABb80uY/FGPvwDo7lCxRi9Pm4Wd0rfDaX0MkTBfAYcsE3NWLtlK20/AXJ2fa/OtTqxyOJxlA8cJBtY8BAQO7gJdVDAxsir5onksXWihEKlw7Im3pUjgSj9kiwhIsPOwAUwthfcqjlbIwJ8KWc/X+q2pbR8CRZSyy4m538Q1HrnwYmvA/6g0cWuWSGqatJcbt7pubt+DUTJQzWBd6ye2kKKlmyt6xfpy6skN2eE6StI6WvZQ45UStszyzeSxumWv/xXWisHifR5P+g24HpuBxsXRgqEUTQlaTbSxHxet2A1ZV9Jg2YPF14L41Nerzwips4ywYnxM6c=
+  - secure: da8e7i0IwMA/ekk+cAamqalIHoKjhBNt5wb7QJ8nIUJ/WCfZ0uQ762qG/1nJOFxd9xySQbEho7M1/CAIXJZ4/0CcTRCEZ+gDs5NCTu4VYXU+Tq2XEm2SXxtQ3ehOo0GRXeriJtAR8WdgI8umvBPfSceWGLJQRCvsJZ90Sf2Dn+TUkL15q/juNj5PZFLomeh+907Iil+d4Uk/YERDpZsFglO6eCBj3XaC3gjXVys54j93dapxCyToqYGjchZlsFnn7b6lujkFgYaDKbbA7M3pmMoJTK3LHcTTw9vfKBBTWObJgTZQNNAA08IWDMNEkCQKN4dTMAFhi72G7D68KVD/nsyaXPOdpMOxSHxJiMNreAOPpyP2kl9ikDeapeuFO3Yvn+X4agviX7ZDDaGBzODd9/8fCs/jDWSxKvEAb8KgLj3O6GffACy0iRL7/WRWCzrgYmkrm+v/Ary0PAMC2r3nFxsWp8jInDVdpnj8Oo4msFRImweOtD+mmBc86czoB1Mpc0dn190gj+92JokL3XWg7jatInSvTiDVNUsoABAJUrF/O4VovnPzBxTvKgEBrcG7uUBby3YX0E/aFDal3s9mHG51yhwrK7bCfxuCCQsztug10gC9U5aa6fPk5rwNCtUaUm3An6YF+21xORYMqh5FWabJ2egW9RDjPnWHskuSIFQ=
