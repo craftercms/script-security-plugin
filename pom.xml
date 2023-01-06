@@ -97,7 +97,17 @@
                   <groupId>dom4j</groupId>
                   <artifactId>dom4j</artifactId>
               </exclusion>
+              <exclusion>
+                  <groupId>com.google.code.findbugs</groupId>
+                   <artifactId>bcel-findbugs</artifactId>
+              </exclusion>
           </exclusions>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.bcel</groupId>
+        <artifactId>bcel</artifactId>
+        <version>${commons.bcel.version}</version>
       </dependency>
 
     <dependency>
