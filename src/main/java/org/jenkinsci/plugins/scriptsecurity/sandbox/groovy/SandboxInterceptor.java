@@ -77,13 +77,9 @@ public final class SandboxInterceptor extends GroovyInterceptor {
         DefaultGroovyStaticMethods.class,
         DefaultGroovyMethods.class,
         StringGroovyMethods.class,
-        SwingGroovyMethods.class,
-        XmlGroovyMethods.class,
         EncodingGroovyMethods.class,
-        DateGroovyMethods.class,
         ProcessGroovyMethods.class,
         IOGroovyMethods.class,
-        NioGroovyMethods.class,
         ResourceGroovyMethods.class,
         EncodingGroovyMethods.class,
         SqlExtensions.class
