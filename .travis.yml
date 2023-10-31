@@ -25,10 +25,8 @@ before_install:
   - cp .travis-settings.xml $HOME/.m2/settings.xml
 install: skip
 script:
-- if [[ "$TRAVIS_PULL_REQUEST" == "false" ]]; then bash -c  "mvn -DskipTests deploy
-  --settings .travis-settings.xml";  fi
-- if [[ "$TRAVIS_PULL_REQUEST" != "false" ]]; then bash -c "mvn -DskipTests clean
-  install" ;fi
+- if [[ "$TRAVIS_PULL_REQUEST" == "false" ]]; then bash -c  "mvn deploy --settings .travis-settings.xml";  fi
+- if [[ "$TRAVIS_PULL_REQUEST" != "false" ]]; then bash -c "mvn clean install" ;fi
 env:
   global:
   - secure: eywE6qkzx50rCZ7O3NDfjkgvHMeEpznovB3juXW0hox+LWpKNDbpnlClsRvEMYGFQGdHE59zo4FtyrlzwK6HyMmkTu21e1hgKmDyyypOzFvp4tuDP5e6HsKupPAN3GF5VPB2s/dPJE4awwpx9Jwe6dxe2w7fnxC7HBurn9mb5WTk9pFJwMb8rfAGoZT/XOuzERI40eNMhFFPBt6zYLttClXjc0b1hNMfq44IycBOAqt9VushO8LZ2s1PChx8HNfJKjsCs8hwUlFQdLadmXUFIYdahghX2hsS5VC3e1MPKZwGPcGvWf5YKSct9vkr5BeaGIGIEey2IO4ey5sdN2BMKjdZJyh5vjIGMtABb80uY/FGPvwDo7lCxRi9Pm4Wd0rfDaX0MkTBfAYcsE3NWLtlK20/AXJ2fa/OtTqxyOJxlA8cJBtY8BAQO7gJdVDAxsir5onksXWihEKlw7Im3pUjgSj9kiwhIsPOwAUwthfcqjlbIwJ8KWc/X+q2pbR8CRZSyy4m538Q1HrnwYmvA/6g0cWuWSGqatJcbt7pubt+DUTJQzWBd6ye2kKKlmyt6xfpy6skN2eE6StI6WvZQ45UStszyzeSxumWv/xXWisHifR5P+g24HpuBxsXRgqEUTQlaTbSxHxet2A1ZV9Jg2YPF14L41Nerzwips4ywYnxM6c=
