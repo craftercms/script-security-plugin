@@ -27,6 +27,9 @@ package org.jenkinsci.plugins.scriptsecurity.sandbox;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Pattern;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 
@@ -34,6 +37,40 @@ import javax.annotation.Nonnull;
  * Determines which methods and similar members which scripts may call.
  */
 public abstract class Whitelist {
+
+    private List<String> getEnvWhitelistRegex = new ArrayList<>();
+
+    public void setGetEnvWhitelistRegex(List<String> getEnvWhitelistRegex) {
+        this.getEnvWhitelistRegex = getEnvWhitelistRegex;
+    }
+
+    /**
+     * Return true if the given method is allowed System.getEnv()
+     * @param m the method
+     * @param args the method arguments
+     * @return true if allowed, false otherwise
+     */
+    public boolean isAllowedGetEnvSystemMethod(@Nonnull Method m, @Nonnull Object[] args) {
+        // Check if the method is "getenv" and it's a static method in the System class
+        if ("getenv".equals(m.getName()) &&
+                java.lang.reflect.Modifier.isStatic(m.getModifiers()) &&
+                m.getDeclaringClass().equals(System.class)) {
+
+            // Check if there is exactly one argument and it's a string
+            if (args.length == 1 && args[0] instanceof String) {
+                String envName = (String) args[0];
+
+                // Match the envName against the regex
+                for (String regex : getEnvWhitelistRegex) {
+                    if (Pattern.matches(regex, envName)) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
 
     /**
      * Checks whether a given virtual method may be invoked.
