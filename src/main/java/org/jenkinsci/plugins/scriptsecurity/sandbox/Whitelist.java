@@ -33,6 +33,8 @@ import java.util.regex.Pattern;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 
+import static java.lang.reflect.Modifier.isStatic;
+
 /**
  * Determines which methods and similar members which scripts may call.
  */
@@ -53,18 +55,14 @@ public abstract class Whitelist {
     public boolean isAllowedGetEnvSystemMethod(@Nonnull Method m, @Nonnull Object[] args) {
         // Check if the method is "getenv" and it's a static method in the System class
         if ("getenv".equals(m.getName()) &&
-                java.lang.reflect.Modifier.isStatic(m.getModifiers()) &&
-                m.getDeclaringClass().equals(System.class)) {
-
-            // Check if there is exactly one argument and it's a string
-            if (args.length == 1 && args[0] instanceof String) {
-                String envName = (String) args[0];
-
-                // Match the envName against the regex
-                for (String regex : getEnvWhitelistRegex) {
-                    if (Pattern.matches(regex, envName)) {
-                        return true;
-                    }
+                isStatic(m.getModifiers()) &&
+                m.getDeclaringClass().equals(System.class) &&
+                args.length == 1 && args[0] instanceof String) {
+            String envName = (String) args[0];
+            // Match the envName against the regex
+            for (String regex : getEnvWhitelistRegex) {
+                if (Pattern.matches(regex, envName)) {
+                    return true;
                 }
             }
         }
