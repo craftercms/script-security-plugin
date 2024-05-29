@@ -57,6 +57,7 @@ public abstract class Whitelist {
         if ("getenv".equals(m.getName()) &&
                 isStatic(m.getModifiers()) &&
                 m.getDeclaringClass().equals(System.class) &&
+                // Check if there is exactly one argument and it's a string
                 args.length == 1 && args[0] instanceof String) {
             String envName = (String) args[0];
             // Match the envName against the regex
