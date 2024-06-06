@@ -27,6 +27,11 @@ package org.jenkinsci.plugins.scriptsecurity.sandbox;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.regex.Pattern;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 
@@ -34,6 +39,51 @@ import javax.annotation.Nonnull;
  * Determines which methods and similar members which scripts may call.
  */
 public abstract class Whitelist {
+
+    private static final Logger LOGGER = Logger.getLogger(Whitelist.class.getName());
+
+    private List<String> getEnvWhitelistRegex = new ArrayList<>();
+
+    /**
+     * Cache the System.getenv method for comparing
+     */
+    private Method getenvMethod;
+
+    public Whitelist() {
+        try {
+            this.getenvMethod = System.class.getMethod("getenv", String.class);
+        } catch (NoSuchMethodException e) {
+            LOGGER.log(Level.WARNING, "No such method 'getenv' in class 'System'.", e);
+        }
+    }
+
+    /**
+     * Set a list of regex of environment variables name that is allowed to be called
+     * @param getEnvWhitelistRegex the regex list
+     */
+    public void setGetEnvWhitelistRegex(List<String> getEnvWhitelistRegex) {
+        this.getEnvWhitelistRegex = getEnvWhitelistRegex;
+    }
+
+    /**
+     * Return true if the given method is allowed System.getEnv()
+     * @param m the method
+     * @param args the method arguments
+     * @return true if allowed, false otherwise
+     */
+    public boolean isAllowedGetEnvSystemMethod(@Nonnull Method m, @Nonnull Object[] args) {
+        if (m.equals(getenvMethod)) {
+            String envName = (String) args[0];
+            // Match the envName against the regex
+            for (String regex : getEnvWhitelistRegex) {
+                if (Pattern.matches(regex, envName)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
 
     /**
      * Checks whether a given virtual method may be invoked.

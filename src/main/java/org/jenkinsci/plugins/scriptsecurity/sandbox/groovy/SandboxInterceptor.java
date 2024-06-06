@@ -186,6 +186,8 @@ public final class SandboxInterceptor extends GroovyInterceptor {
         if (m == null) {
             // TODO consider DefaultGroovyStaticMethods
             throw new UnsupportedOperationException("No such static method found: staticMethod " + EnumeratingWhitelist.getName(receiver) + " " + method + printArgumentTypes(args));
+        } else if (whitelist.isAllowedGetEnvSystemMethod(m, args)) {
+            return super.onStaticCall(invoker, receiver, method, args);
         } else if (StaticWhitelist.isPermanentlyBlacklistedStaticMethod(m)) {
             throw StaticWhitelist.rejectStaticMethod(m);
         } else if (whitelist.permitsStaticMethod(m, args)) {
