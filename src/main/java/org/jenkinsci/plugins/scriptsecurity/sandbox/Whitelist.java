@@ -29,19 +29,38 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
-
-import static java.lang.reflect.Modifier.isStatic;
 
 /**
  * Determines which methods and similar members which scripts may call.
  */
 public abstract class Whitelist {
 
+    private static final Logger LOGGER = Logger.getLogger(Whitelist.class.getName());
+
     private List<String> getEnvWhitelistRegex = new ArrayList<>();
 
+    /**
+     * Cache the System.getenv method for comparing
+     */
+    private Method getenvMethod;
+
+    public Whitelist() {
+        try {
+            this.getenvMethod = System.class.getMethod("getenv", String.class);
+        } catch (NoSuchMethodException e) {
+            LOGGER.log(Level.WARNING, "No such method 'getenv' in class 'System'.", e);
+        }
+    }
+
+    /**
+     * Set a list of regex of environment variables name that is allowed to be called
+     * @param getEnvWhitelistRegex the regex list
+     */
     public void setGetEnvWhitelistRegex(List<String> getEnvWhitelistRegex) {
         this.getEnvWhitelistRegex = getEnvWhitelistRegex;
     }
@@ -53,12 +72,7 @@ public abstract class Whitelist {
      * @return true if allowed, false otherwise
      */
     public boolean isAllowedGetEnvSystemMethod(@Nonnull Method m, @Nonnull Object[] args) {
-        // Check if the method is "getenv" and it's a static method in the System class
-        if ("getenv".equals(m.getName()) &&
-                isStatic(m.getModifiers()) &&
-                m.getDeclaringClass().equals(System.class) &&
-                // Check if there is exactly one argument and it's a string
-                args.length == 1 && args[0] instanceof String) {
+        if (m.equals(getenvMethod)) {
             String envName = (String) args[0];
             // Match the envName against the regex
             for (String regex : getEnvWhitelistRegex) {
