@@ -1,0 +1,2 @@
+method groovy.lang.Script println java.lang.Object
+method java.lang.String contains java.lang.CharSequence

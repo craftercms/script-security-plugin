@@ -15,7 +15,6 @@
  */
 package org.jenkinsci.plugins.scriptsecurity.sandbox.whitelists;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.jenkinsci.plugins.scriptsecurity.sandbox.Whitelist;
 
 import javax.annotation.CheckForNull;
@@ -24,19 +23,24 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Collection;
+import java.util.Objects;
 
 import static java.util.Collections.unmodifiableCollection;
+import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 
 /**
  * Composite of multiple whitelists
  * A call is permitted if all delegates permit it
  */
 public class CompositeWhitelist extends Whitelist {
-	protected Collection<? extends Whitelist> delegates;
+	protected final Collection<? extends Whitelist> delegates;
 
-	public CompositeWhitelist(Collection<? extends Whitelist> delegates) {
-		if (CollectionUtils.isEmpty(delegates)) {
+	public CompositeWhitelist(final Collection<? extends Whitelist> delegates) {
+		if (isEmpty(delegates)) {
 			throw new IllegalArgumentException("delegates must not be empty");
+		}
+		if (delegates.stream().anyMatch(Objects::isNull)) {
+			throw new IllegalArgumentException("delegates must not contain null elements");
 		}
 		this.delegates = unmodifiableCollection(delegates);
 	}
