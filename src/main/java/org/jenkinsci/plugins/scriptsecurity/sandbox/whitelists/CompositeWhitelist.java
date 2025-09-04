@@ -15,6 +15,7 @@
  */
 package org.jenkinsci.plugins.scriptsecurity.sandbox.whitelists;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.jenkinsci.plugins.scriptsecurity.sandbox.Whitelist;
 
 import javax.annotation.CheckForNull;
@@ -24,6 +25,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Collection;
 
+import static java.util.Collections.unmodifiableCollection;
+
 /**
  * Composite of multiple whitelists
  * A call is permitted if all delegates permit it
@@ -32,7 +35,10 @@ public class CompositeWhitelist extends Whitelist {
 	protected Collection<? extends Whitelist> delegates;
 
 	public CompositeWhitelist(Collection<? extends Whitelist> delegates) {
-		this.delegates = delegates;
+		if (CollectionUtils.isEmpty(delegates)) {
+			throw new IllegalArgumentException("delegates must not be empty");
+		}
+		this.delegates = unmodifiableCollection(delegates);
 	}
 
 	@Override
@@ -70,4 +76,8 @@ public class CompositeWhitelist extends Whitelist {
 		return delegates.stream().allMatch(delegate -> delegate.permitsStaticFieldSet(field, value));
 	}
 
+	@Override
+	public boolean isAllowedGetEnvSystemMethod(@Nonnull Method m, @Nonnull Object[] args) {
+		return delegates.stream().allMatch(delegate -> delegate.isAllowedGetEnvSystemMethod(m, args));
+	}
 }
